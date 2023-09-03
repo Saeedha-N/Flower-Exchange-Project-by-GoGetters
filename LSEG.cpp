@@ -155,25 +155,6 @@ int main()
         }
     }
 
-    // Process the data if needed
-    // int item_number = 1;
-
-    // for (const auto &row : data) // For each row in the data vector
-    // {
-    //     output_file << "ord" << item_number << ",";
-
-    //     for (size_t i = 0; i < row.size(); ++i)
-    //     {
-    //         output_file << row[i];
-    //         if (i < row.size() - 1)
-    //         {
-    //             output_file << ",";
-    //         }
-    //     }
-    //     output_file << endl;
-    //     item_number++;
-    // }
-
     output_file.close();
 
     cout << "Data processed and written to Execution_Rep.csv" << endl;
