@@ -1,5 +1,6 @@
-execution_rep.csv,,,,,,
-Order ID, Client Order ID, Instrument, Side, Execution Status, Quantity, Price
-ord1,aa13,Rose,2,0,100,55.00
-ord2,aa14,Rose,2,0,100,45.00
-ord3,aa15,Rose,1,0,100,35.00
+execution_rep.csv
+Order ID, Client Order ID, Instrument, Side, Execution Status, Quantity, Price, Reason
+ord1,aa13,Rose,2,0,100,55,
+ord2,aa14,Rose,2,0,100,45,
+ord3,aa15,Rose,1,2,100,45,
+ord2,aa14,Rose,2,2,100,45,
