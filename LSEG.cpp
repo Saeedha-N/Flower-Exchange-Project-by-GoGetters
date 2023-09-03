@@ -61,9 +61,9 @@ public:
     {
         this->instrument = instrument;
     }
-///////////////////////////////////////////
+    ///////////////////////////////////////////
     void addOrder(Order order) {
-        
+
         if (order.side == 1 || order.side == 2) {
             completeTransaction(order);
         }
@@ -72,7 +72,16 @@ public:
             order.reason = "Invalid side";
         }
     }
-///////////////////////////////////////////
+    ///////////////////////////////////////////
+
+    int findOrderById(vector<Order>& orders, string orderID) {
+        for (int j = 0; j < orders.size(); j++) {
+            if (orders[j].orderID == orderID) {
+                return j;
+            }
+        }
+    }
+
     void completeTransaction(Order order) {
         if (order.side == 1) {
             // Buying transaction
@@ -81,24 +90,20 @@ public:
                     // Add Buyer's updated order to the orders vector
                     order.status = 2; // Filled
                     orders.push_back(order);
-                    
+
                     // Find seller's order in the orders vector and add a new order to the orders vector
-                    for (int j = 0; j < orders.size(); j++) {
-                        if (orders[j].orderID == sellOrders[i].clientOrderID) {
-                            Order SellerOrder = orders[j];
-                            SellerOrder.status = 2; // Filled
-                            orders.push_back(SellerOrder);
-                            break;
-                        }
-                    }
+                    int orderIndex = findOrderById(orders, sellOrders[i].clientOrderID);
+                    Order SellerOrder = orders[orderIndex];
+                    SellerOrder.status = 2; // Filled
+                    orders.push_back(SellerOrder);
+                    sellOrders.erase(sellOrders.begin() + i);
                     return;
                 }
             }
             // If no match add Buyer's order to the buyOrders vector
-            buyOrders.push_back({order.orderID, order.quantity, order.price});
-            orders.push_back(order); //Default status is 0 (New)
+            buyOrders.push_back({ order.orderID, order.quantity, order.price });
+            orders.push_back(order); // Default status is 0 (New)
         }
-
         else {
             // Selling transaction
             for (int i = 0; i < buyOrders.size(); i++) {
@@ -108,28 +113,17 @@ public:
                     orders.push_back(order);
 
                     // Find Buyer's order in the orders vector and add a new order to the orders vector
-                    for (int j = 0; j < orders.size(); j++) {
-                        if (orders[j].orderID == buyOrders[i].clientOrderID) {
-                            Order BuyerOrder = orders[j];
-                            BuyerOrder.status = 2; // Filled
-                            orders.push_back(BuyerOrder);
-                            break;
-                        }
-                    }
+                    int orderIndex = findOrderById(orders, buyOrders[i].clientOrderID);
+                    Order BuyerOrder = orders[orderIndex];
+                    BuyerOrder.status = 2; // Filled
+                    orders.push_back(BuyerOrder);
+                    buyOrders.erase(buyOrders.begin() + i);
                     return;
                 }
             }
             // If no match add Seller's order to the sellOrders vector
-            sellOrders.push_back({order.orderID, order.quantity, order.price});
-            orders.push_back(order); //Default status is 0 (New)
-        }
-    } 
-///////////////////////////////////////////
-    void printOrders(){
-        for (Order order : orders)
-        {
-            // cout << order.toString() << endl;
-            order.toString();
+            sellOrders.push_back({ order.orderID, order.quantity, order.price });
+            orders.push_back(order); // Default status is 0 (New)
         }
     }
 };
