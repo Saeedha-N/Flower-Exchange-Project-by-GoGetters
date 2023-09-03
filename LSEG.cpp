@@ -3,7 +3,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
-#include <iomanip> // Include the <iomanip> header for formatting
+// #include <iomanip> // Include the <iomanip> header for formatting
 
 using namespace std;
 
@@ -38,7 +38,7 @@ struct Order
     }
 };
 
-struct buyOrder_or_sellOrder {
+struct entityOrder {
     string clientOrderID;
     int quantity;
     double price;
@@ -46,13 +46,16 @@ struct buyOrder_or_sellOrder {
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
 class OrderBook
 {
 public:
     string instrument;
     vector<Order> orders;
-    vector<buyOrder_or_sellOrder> buyOrders;
-    vector<buyOrder_or_sellOrder> sellOrders;
+    vector<entityOrder> buyOrders;
+    vector<entityOrder> sellOrders;
 
     OrderBook(string instrument)
     {
@@ -71,30 +74,26 @@ public:
     }
 ///////////////////////////////////////////
     void completeTransaction(Order order) {
-
         if (order.side == 1) {
             // Buying transaction
             for (int i = 0; i < sellOrders.size(); i++) {
                 if (sellOrders[i].price == order.price && sellOrders[i].quantity == order.quantity) {
-                    int status = 2; // Filled
-
-                    // Add Buyer's order to the orders vector
-                    order.status = status;
+                    // Add Buyer's updated order to the orders vector
+                    order.status = 2; // Filled
                     orders.push_back(order);
                     
                     // Find seller's order in the orders vector and add a new order to the orders vector
                     for (int j = 0; j < orders.size(); j++) {
                         if (orders[j].orderID == sellOrders[i].clientOrderID) {
-                            Order pairSellerOrder = orders[j];
-                            pairSellerOrder.status = status;
-                            orders.push_back(pairSellerOrder);
+                            Order SellerOrder = orders[j];
+                            SellerOrder.status = 2; // Filled
+                            orders.push_back(SellerOrder);
                             break;
                         }
                     }
                     return;
                 }
             }
-
             // If no match add Buyer's order to the buyOrders vector
             buyOrders.push_back({order.orderID, order.quantity, order.price});
             orders.push_back(order); //Default status is 0 (New)
@@ -104,30 +103,27 @@ public:
             // Selling transaction
             for (int i = 0; i < buyOrders.size(); i++) {
                 if (buyOrders[i].price == order.price && buyOrders[i].quantity == order.quantity) {
-                    int status = 2; // Filled
-
                     // Add Seller's order to the orders vector
-                    order.status = status;
+                    order.status = 2; // Filled
                     orders.push_back(order);
 
                     // Find Buyer's order in the orders vector and add a new order to the orders vector
                     for (int j = 0; j < orders.size(); j++) {
                         if (orders[j].orderID == buyOrders[i].clientOrderID) {
-                            Order pairBuyerOrder = orders[j];
-                            pairBuyerOrder.status = status;
-                            orders.push_back(pairBuyerOrder);
+                            Order BuyerOrder = orders[j];
+                            BuyerOrder.status = 2; // Filled
+                            orders.push_back(BuyerOrder);
                             break;
                         }
                     }
                     return;
                 }
             }
-
             // If no match add Seller's order to the sellOrders vector
             sellOrders.push_back({order.orderID, order.quantity, order.price});
             orders.push_back(order); //Default status is 0 (New)
         }
-    }     
+    } 
 ///////////////////////////////////////////
     void printOrders(){
         for (Order order : orders)
@@ -237,3 +233,36 @@ int main()
 
     return 0;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    //     else {
+    //         // Selling transaction
+    //         for (int i = 0; i < buyOrders.size(); i++) {
+    //             if (buyOrders[i].price == order.price && buyOrders[i].quantity == order.quantity) {
+    //                 int status = 2; // Filled
+
+    //                 // Add Seller's order to the orders vector
+    //                 order.status = status;
+    //                 orders.push_back(order);
+
+    //                 // Find Buyer's order in the orders vector and add a new order to the orders vector
+    //                 for (int j = 0; j < orders.size(); j++) {
+    //                     if (orders[j].orderID == buyOrders[i].clientOrderID) {
+    //                         Order pairBuyerOrder = orders[j];
+    //                         pairBuyerOrder.status = status;
+    //                         orders.push_back(pairBuyerOrder);
+    //                         break;
+    //                     }
+    //                 }
+    //                 return;
+    //             }
+    //         }
+
+    //         // If no match add Seller's order to the sellOrders vector
+    //         sellOrders.push_back({order.orderID, order.quantity, order.price});
+    //         orders.push_back(order); //Default status is 0 (New)
+    //     }
+    // }     
