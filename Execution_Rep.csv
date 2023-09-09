@@ -1,6 +1,10 @@
 execution_rep.csv
 Order ID, Client Order ID, Instrument, Side, Execution Status, Quantity, Price, Reason
 ord1,aa13,Rose,2,0,100,55,
-ord2,aa14,Rose,2,0,200,45,
+ord2,aa14,Rose,1,0,100,45,
+ord3,aa15,Rose,1,0,50,45,
+ord4,aa16,Rose,2,3,100,45,
+ord2,aa14,Rose,1,2,100,45,
+ord4,aa16,Rose,2,3,50,45,
 ord3,aa15,Rose,1,2,100,45,
-ord2,aa14,Rose,2,3,100,45,
+ord5,aa17,Rose,1,0,500,65,
