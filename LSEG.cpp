@@ -128,17 +128,17 @@ public:
                         SellerOrder.price = 1;
 
                     if (sellOrders[i].quantity >= order.quantity) {
-                        order.status = 21; // Filled
+                        order.status = 2; // Filled
                         orders.push_back(order);
 
                         if (sellOrders[i].quantity == order.quantity) {
-                            SellerOrder.status = 22; // Filled
+                            SellerOrder.status = 2; // Filled
                             SellerOrder.quantity = order.quantity;
                             orders.push_back(SellerOrder);
                             sellOrders.erase(sellOrders.begin() + i);
                         }
                         else {
-                            SellerOrder.status = 33; // PFilled
+                            SellerOrder.status = 3; // PFilled
                             SellerOrder.quantity = order.quantity;
                             orders.push_back(SellerOrder);
                             sellOrders[i].quantity -= order.quantity;
@@ -148,14 +148,17 @@ public:
                     }
                     else {
                         int tmp = order.quantity - sellOrders[i].quantity;
+
+                        if (buyOrders.size() > 0 and buyOrders.back().clientOrderID == order.orderID)
+                            buyOrders.erase(buyOrders.end() - 1 );
                         buyOrders.push_back({ order.orderID, order.quantity - sellOrders[i].quantity, order.price });
                         
-                        order.status = 34; // PFilled
+                        order.status = 3; // PFilled
                         order.quantity = sellOrders[i].quantity;
                         orders.push_back(order);
                         order.quantity = order.quantity - sellOrders[i].quantity;
 
-                        SellerOrder.status = 25; // Filled
+                        SellerOrder.status = 2; // Filled
                         SellerOrder.quantity = sellOrders[i].quantity;
                         orders.push_back(SellerOrder);
                         sellOrders.erase(sellOrders.begin() + i);
@@ -240,7 +243,7 @@ public:
                     else {
                         int tmp = order.quantity - buyOrders[i].quantity;
 
-                        order.status = 3333; // PFilled
+                        order.status = 3; // PFilled
                         order.quantity = buyOrders[i].quantity;
                         orders.push_back(order);
                         if (price)
@@ -254,7 +257,7 @@ public:
 
 
 
-                        BuyerOrder.status = 2222; // Filled
+                        BuyerOrder.status = 2; // Filled
                         BuyerOrder.quantity = buyOrders[i].quantity;   // changed 
                         orders.push_back(BuyerOrder);
                         buyOrders.erase(buyOrders.begin() + i);
