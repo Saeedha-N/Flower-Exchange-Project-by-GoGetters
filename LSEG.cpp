@@ -107,27 +107,38 @@ public:
             // }
 
             // Buying transaction if only price match is found
+
             bool pfill = false;
-            for (int i = 0; i < sellOrders.size(); i++) {
+
+            
+            
+            int i = 0;
+            while (i < sellOrders.size()) {
+
+
+                bool price = false;
+                if (order.price == 2 and sellOrders[i].price == 1){
+                    order.price = 1;
+                    price = true;
                 
-                if (sellOrders[i].price == order.price) {
-
-
+                if (sellOrders[i].price == order.price or price)  {
                     int orderIndex = findOrderById(orders, sellOrders[i].clientOrderID);
                     Order SellerOrder = orders[orderIndex];
+                    if (price)
+                        SellerOrder.price = 1;
 
                     if (sellOrders[i].quantity >= order.quantity) {
-                        order.status = 2; // Filled
+                        order.status = 21; // Filled
                         orders.push_back(order);
 
                         if (sellOrders[i].quantity == order.quantity) {
-                            SellerOrder.status = 2; // Filled
+                            SellerOrder.status = 22; // Filled
                             SellerOrder.quantity = order.quantity;
                             orders.push_back(SellerOrder);
                             sellOrders.erase(sellOrders.begin() + i);
                         }
                         else {
-                            SellerOrder.status = 3; // PFilled
+                            SellerOrder.status = 33; // PFilled
                             SellerOrder.quantity = order.quantity;
                             orders.push_back(SellerOrder);
                             sellOrders[i].quantity -= order.quantity;
@@ -139,25 +150,29 @@ public:
                         int tmp = order.quantity - sellOrders[i].quantity;
                         buyOrders.push_back({ order.orderID, order.quantity - sellOrders[i].quantity, order.price });
                         
-                        order.status = 3; // PFilled
+                        order.status = 34; // PFilled
                         order.quantity = sellOrders[i].quantity;
                         orders.push_back(order);
                         order.quantity = order.quantity - sellOrders[i].quantity;
 
-                        SellerOrder.status = 2; // Filled
+                        SellerOrder.status = 25; // Filled
                         SellerOrder.quantity = sellOrders[i].quantity;
                         orders.push_back(SellerOrder);
                         sellOrders.erase(sellOrders.begin() + i);
                         order.quantity = tmp;
+
                         i--;
                     }
                     pfill = true;
                 }
+                }
+                i++;
             }
             if (pfill) {
 				return;
-			}
-
+            }
+            
+            
             // If no match add Buyer's order to the buyOrders vector
             entityOrder buyOrder = { order.orderID, order.quantity, order.price };
             buyOrders.push_back(buyOrder);
@@ -225,14 +240,21 @@ public:
                     else {
                         int tmp = order.quantity - buyOrders[i].quantity;
 
-                        sellOrders.push_back({ order.orderID, tmp, order.price });
-                        order.status = 3; // PFilled
+                        order.status = 3333; // PFilled
                         order.quantity = buyOrders[i].quantity;
                         orders.push_back(order);
+                        if (price)
+                            order.price = 1;
+
+                        if ((sellOrders.size() > 0) and (sellOrders.back().clientOrderID ==  order.orderID))
+                            sellOrders.erase(sellOrders.end() - 1);
+                        sellOrders.push_back({ order.orderID, tmp, order.price });  // if exists need to update otherwise need to create new one
 
 
 
-                        BuyerOrder.status = 2; // Filled
+
+
+                        BuyerOrder.status = 2222; // Filled
                         BuyerOrder.quantity = buyOrders[i].quantity;   // changed 
                         orders.push_back(BuyerOrder);
                         buyOrders.erase(buyOrders.begin() + i);
