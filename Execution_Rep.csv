@@ -7,4 +7,12 @@ ord4,aa16,Rose,2,3,100,45,
 ord2,aa14,Rose,1,2,100,45,
 ord4,aa16,Rose,2,2,50,45,
 ord3,aa15,Rose,1,2,50,45,
-ord5,aa17,Rose,1,0,500,65,
+ord5,aa17,Lo,1,1,500,65,Invalid instrument
+ord6,aa18,Lavender,2,0,300,34,
+ord7,aa19,Tulip,5,1,1000,40,Invalid side
+ord8,aa20,Rose,1,1,100,-50,Invalid price
+ord9,aa21,Rose,1,3,50,45,
+ord4,aa16,Rose,2,2,50,45,
+ord10,aa22,Rose,1,1,51,45,Invalid quantity
+ord11,aa23,Rose,1,1,8000,45,Invalid quantity
+ord12,aa24,Rose,1,1,2,45,Invalid quantity
