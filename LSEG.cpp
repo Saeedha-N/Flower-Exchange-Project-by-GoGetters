@@ -89,22 +89,22 @@ public:
     void completeTransaction(Order order) {
         if (order.side == 1) {
             // Buying transaction if exact match is found
-            for (int i = 0; i < sellOrders.size(); i++) {
-                if (sellOrders[i].price == order.price && sellOrders[i].quantity == order.quantity) {
-                    // Add Buyer's updated order to the orders vector
-                    order.status = 2; // Filled
-                    orders.push_back(order);
-
-                    // Find seller's order in the orders vector and add a new order to the orders vector
-                    int orderIndex = findOrderById(orders, sellOrders[i].clientOrderID);
-                    Order SellerOrder = orders[orderIndex];
-                    SellerOrder.status = 2; // Filled
-                    //SellerOrder.quantity = order.quantity;   //Add this line
-                    orders.push_back(SellerOrder);   
-                    sellOrders.erase(sellOrders.begin() + i);
-                    return;
-                }
-            }
+            // for (int i = 0; i < sellOrders.size(); i++) {
+            //     if (sellOrders[i].price == order.price && sellOrders[i].quantity == order.quantity) {
+            //         // Add Buyer's updated order to the orders vector
+            //         order.status = 2; // Filled
+            //         orders.push_back(order);
+// 
+            //         // Find seller's order in the orders vector and add a new order to the orders vector
+            //         int orderIndex = findOrderById(orders, sellOrders[i].clientOrderID);
+            //         Order SellerOrder = orders[orderIndex];
+            //         SellerOrder.status = 2; // Filled
+            //         //SellerOrder.quantity = order.quantity;   //Add this line
+            //         orders.push_back(SellerOrder);   
+            //         sellOrders.erase(sellOrders.begin() + i);
+            //         return;
+            //     }
+            // }
 
             // Buying transaction if only price match is found
             bool pfill = false;
@@ -131,20 +131,25 @@ public:
                             SellerOrder.quantity = order.quantity;
                             orders.push_back(SellerOrder);
                             sellOrders[i].quantity -= order.quantity;
+                            
                         }
 
                     }
                     else {
+                        int tmp = order.quantity - sellOrders[i].quantity;
                         buyOrders.push_back({ order.orderID, order.quantity - sellOrders[i].quantity, order.price });
                         
                         order.status = 3; // PFilled
                         order.quantity = sellOrders[i].quantity;
                         orders.push_back(order);
+                        order.quantity = order.quantity - sellOrders[i].quantity;
 
                         SellerOrder.status = 2; // Filled
                         SellerOrder.quantity = sellOrders[i].quantity;
                         orders.push_back(SellerOrder);
                         sellOrders.erase(sellOrders.begin() + i);
+                        order.quantity = tmp;
+                        i--;
                     }
                     pfill = true;
                 }
@@ -162,32 +167,36 @@ public:
         }
         else { //order.side == 2
             // Selling transaction if exact match is found
-            for (int i = 0; i < buyOrders.size(); i++) {
-                if (buyOrders[i].price == order.price && buyOrders[i].quantity == order.quantity) {
-                    // Add Seller's order to the orders vector
-                    order.status = 2; // Filled
-                    orders.push_back(order);
-
-                    // Find Buyer's order in the orders vector and add a new order to the orders vector
-                    int orderIndex = findOrderById(orders, buyOrders[i].clientOrderID);
-                    Order BuyerOrder = orders[orderIndex];
-                    BuyerOrder.status = 2; // Filled
-                    orders.push_back(BuyerOrder);
-                    buyOrders.erase(buyOrders.begin() + i);
-                    return;
-                }
-            }
+            // for (int i = 0; i < buyOrders.size(); i++) {
+            //     if (buyOrders[i].price == order.price && buyOrders[i].quantity == order.quantity) {
+            //         // Add Seller's order to the orders vector
+            //         order.status = 2; // Filled
+            //         orders.push_back(order);
+// 
+            //         // Find Buyer's order in the orders vector and add a new order to the orders vector
+            //         int orderIndex = findOrderById(orders, buyOrders[i].clientOrderID);
+            //         Order BuyerOrder = orders[orderIndex];
+            //         BuyerOrder.status = 2; // Filled
+            //         orders.push_back(BuyerOrder);
+            //         buyOrders.erase(buyOrders.begin() + i);
+            //         return;
+            //     }
+            // }
 
             // Selling transaction if only price match is found
             bool pfill = false;
+            int i = 0;
+            while (i < buyOrders.size()) {
+                
 
-            for (int i = 0; i < buyOrders.size(); i++) {
                 if (buyOrders[i].price == order.price) {
+
 
                     int orderIndex = findOrderById(orders, buyOrders[i].clientOrderID);
                     Order BuyerOrder = orders[orderIndex];
 
                     if (buyOrders[i].quantity >= order.quantity) {
+                        
                         order.status = 2; // Filled
                         orders.push_back(order);
                         
@@ -207,21 +216,26 @@ public:
 
                     }
                     else {
+                        int tmp = order.quantity - buyOrders[i].quantity;
+ 
                         sellOrders.push_back({ order.orderID, order.quantity - buyOrders[i].quantity, order.price });
                         
                         order.status = 3; // PFilled
                         order.quantity = buyOrders[i].quantity;
                         orders.push_back(order);
+                        
 
 
                         BuyerOrder.status = 2; // Filled
                         BuyerOrder.quantity = sellOrders[i].quantity;
                         orders.push_back(BuyerOrder);
                         buyOrders.erase(buyOrders.begin() + i);
+                        order.quantity = tmp;
                         i--;
                     }
                     pfill = true;
                 }
+                i++;
             }
             if (pfill) {
                 return;
