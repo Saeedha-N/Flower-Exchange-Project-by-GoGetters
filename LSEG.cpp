@@ -3,6 +3,9 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <chrono>
+using namespace std::chrono;
+
 // #include <iomanip> // Include the <iomanip> header for formatting
 
 using namespace std;
@@ -280,6 +283,8 @@ public:
 
 int main()
 {
+    auto start = high_resolution_clock::now();
+
     // Create the order books.
     OrderBook roseOrderBook("Rose");
     OrderBook lavenderOrderBook("Lavender");
@@ -365,6 +370,9 @@ int main()
 
     input_file.close();
     output_file.close();
-
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: "
+         << duration.count() << " microseconds" << endl;
     return 0;
 }
