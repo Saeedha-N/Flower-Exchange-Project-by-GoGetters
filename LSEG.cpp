@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include <ctime>  
 using namespace std::chrono;
 
 // #include <iomanip> // Include the <iomanip> header for formatting
@@ -279,6 +280,26 @@ public:
 };
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+string currentDate() {  
+    time_t now = time(0); // get current date and time    
+    tm* ltm = localtime(&now);  
+    // print various components of tm structure.  
+    //cout << "Year:" << 1900 + ltm->tm_year << endl; // print the year  
+    //cout << "Month: " << 1 + ltm->tm_mon << endl; // print month number  
+    //cout << "Day: " << ltm->tm_mday << endl; // print the day 
+
+    return to_string(1900 + ltm->tm_year) + "-"+ to_string(1 + ltm->tm_mon) + "-" + to_string(ltm->tm_mday) ;
+    //cout << 30 + ltm->tm_min << ":";  
+    //cout << ltm->tm_sec << endl;
+}
+///////////////////////////////////////////////////
+
+
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 int main()
@@ -365,14 +386,73 @@ int main()
         order_id++;
     }
     /////////////////////////////////////////////////////////////////////
+    //Calculate time
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    double time = static_cast<double>(duration.count()) / 1000000;
+    //cout << time << "Micro seconds"<< endl;
+    int years = time / 31536000;
+    int months = (time - years * 31536000) / 2592000;
+    int days = (time - years * 31536000 - months * 2592000) / 86400;
+    int Hours = time / 3600;
+    int Minutes = (time - Hours * 3600) / 60;
+    int Seconds = time - Hours * 3600 - Minutes * 60;
+    double decimal = static_cast<double>(time - Hours * 3600 - Minutes * 60 - Seconds);
+    double seconds = static_cast<double>(Seconds + decimal);
+    //cout << Hours << " hours " << Minutes << " minutes " << seconds << " seconds"<<endl;
+    
+    string YYYY, MM, DD, HH, Min, SS;
+    if (years < 10)
+        YYYY = "000" + to_string(years);
+    else if (years < 100)
+        YYYY = "00" + to_string(years);
+    else if (years < 1000)
+        YYYY = "0" + to_string(years);
+    else
+        YYYY = to_string(years);
+
+    if (months < 10)
+        MM = "0" + to_string(months);
+    else
+        MM = to_string(months);
+
+    if (days < 10)
+        DD = "0" + to_string(days);
+    else
+        DD = to_string(days);
+
+    if (Hours < 10)
+        HH = "0" + to_string(Hours);
+    else
+        HH = to_string(Hours);
+    if (Minutes < 10)
+        Min = "0" + to_string(Minutes);
+    else
+        Min = to_string(Minutes);
+    if (seconds < 10)
+        SS = "0" + to_string(seconds);
+    else
+        SS = to_string(seconds);
+    string timeString =  "Transaction time = " + YYYY + MM + DD + "-"+ HH + Min + SS;
+    cout << timeString << endl;
+    output_file << "\n" << timeString <<endl;
+
 
     cout << "Data processed and written to Execution_Rep.csv" << endl;
 
     input_file.close();
     output_file.close();
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: "
-         << duration.count() << " microseconds" << endl;
+
+
+
+
+
+
+
+
+
+
+
+
     return 0;
 }
